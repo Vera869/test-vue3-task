@@ -1,4 +1,6 @@
 <template>
+  <div class="container">
+  <Filter :options="props.options" />
   <section
     :style="`background: ${options.color}`"
     @drop="onDrop($event, options.id)"
@@ -35,12 +37,14 @@
       @save-card="addCard"
       @close-form="isNewCardDialogOpen = false" />
   </section>
+</div>
 </template>
 
 <script setup>
   import { ref, inject } from 'vue';
   import CardItem from './CardItem.vue';
   import CardForm from './CardForm.vue';
+  import Filter from './Filter.vue';
 
   const firstList = inject('firstList');
   const secondList = inject('secondList');
@@ -132,6 +136,12 @@
 </script>
 
 <style lang="scss" scoped>
+  .container {
+    padding: 10px;
+    width: 500px;
+    min-height: 500px;
+    background-color: black;
+  }
   section {
     padding: 10px;
     width: 400px;
