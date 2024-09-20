@@ -6,7 +6,7 @@
             v-bind="this.button" 
             id="up" 
             class="filter__button filter__button_up" 
-            @click="hendleSort($event.target)" 
+            @click="hendleSort($event.target, cards)" 
             :style="`box-shadow: 0px 0px 27px 0px ${borderColor}`"
          ></button>
          <!-- disabled="isBtnDisabled"  $event.target.id-->
@@ -18,7 +18,7 @@
             v-bind="this.button" 
             id="down" 
             class="filter__button filter__button_down" 
-            @click="hendleSort($event.target)"
+            @click="hendleSort($event.target, cards)"
             :style="`box-shadow: 0px 0px 27px 0px ${borderColor}`"
          ></button>
       </template>
@@ -28,7 +28,7 @@
          <button 
             v-bind="this.button" 
             id="nosort" class="filter__button filter__button_nosort" 
-            @click="hendleSort($event.target)" 
+            @click="hendleSort($event.target, cards)" 
             :style="`box-shadow: 0px 0px 27px 0px ${borderColor}`"
          ></button>
       </template>
@@ -43,17 +43,8 @@ const firstList = inject('firstList');
 const secondList = inject('secondList');
 const lastList = inject('lastList');
 // let isBtnDisabled = ref(false);
-
-const borderColor = computed(() => {
-    return props.options.id === 1 ? 'blue' : props.options.id === 2 ? 'yellow' : 'pink';
-  });
-const props = defineProps({
-   options: {},
-});
-const hendleSort = (event) => {
-   const id = event.id;
-   let cards = ref([]);
-   console.log(id);
+let cards = ref([]);
+   
    function getLocalCards() {
    switch (props.options.id) {
       case 1:
@@ -68,9 +59,21 @@ const hendleSort = (event) => {
       }
    }
    getLocalCards();
-   if(id === "up") {cards = cards.value.sort((a, b) => a.rating.rate - b.rating.rate);}
-   else if(id === "doun") {cards = cards.value.sort((a, b) => b.rating.rate - a.rating.rate);}
-   else if(id === "nosort") {cards = cards;}
+const borderColor = computed(() => {
+    return props.options.id === 1 ? 'blue' : props.options.id === 2 ? 'yellow' : 'pink';
+  });
+const props = defineProps({
+   options: {},
+});
+const hendleSort = (event, dataCards) => {
+   const id = event.id;
+   console.log(id);
+   console.log(dataCards);
+   let cards = ref([]);
+
+   if(id === "up") {cards = dataCards.sort((a, b) => a.rating.rate - b.rating.rate);}
+   else if(id === "doun") {cards = dataCards.sort((a, b) => b.rating.rate - a.rating.rate);}
+   else if(id === "nosort") {cards = dataCards;}
    console.log(cards);
 }
 
