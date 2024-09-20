@@ -1,15 +1,79 @@
 <template>
 <div class="filter" :style="`background-color: ${options.color}`">
-   <button class="filter__button filter__button_up"></button>
-   <button class="filter__button filter__button_down"></button>
-   <button class="filter__button filter__button_nosort"></button>
+   <v-tooltip class="tooltip" text="По возрастанию рейтинга">
+      <template v-slot:activator="{ props }">
+         <button 
+            v-bind="this.button" 
+            id="up" 
+            class="filter__button filter__button_up" 
+            @click="hendleSort($event.target)" 
+            :style="`box-shadow: 0px 0px 27px 0px ${borderColor}`"
+         ></button>
+         <!-- disabled="isBtnDisabled"  $event.target.id-->
+      </template>
+   </v-tooltip>
+   <v-tooltip text="По убыванию рейтинга">
+      <template v-slot:activator="{ props }">
+         <button 
+            v-bind="this.button" 
+            id="down" 
+            class="filter__button filter__button_down" 
+            @click="hendleSort($event.target)"
+            :style="`box-shadow: 0px 0px 27px 0px ${borderColor}`"
+         ></button>
+      </template>
+   </v-tooltip>
+   <v-tooltip text="Без сортировки">
+      <template v-slot:activator="{ props }">
+         <button 
+            v-bind="this.button" 
+            id="nosort" class="filter__button filter__button_nosort" 
+            @click="hendleSort($event.target)" 
+            :style="`box-shadow: 0px 0px 27px 0px ${borderColor}`"
+         ></button>
+      </template>
+   </v-tooltip>
 </div>
 </template>
 
 <script setup>
-  const props = defineProps({
-    options: {},
+import { computed, inject, ref } from 'vue';
+
+const firstList = inject('firstList');
+const secondList = inject('secondList');
+const lastList = inject('lastList');
+// let isBtnDisabled = ref(false);
+
+const borderColor = computed(() => {
+    return props.options.id === 1 ? 'blue' : props.options.id === 2 ? 'yellow' : 'pink';
   });
+const props = defineProps({
+   options: {},
+});
+const hendleSort = (event) => {
+   const id = event.id;
+   let cards = ref([]);
+   console.log(id);
+   function getLocalCards() {
+   switch (props.options.id) {
+      case 1:
+         cards = firstList;
+         break;
+      case 2:
+         cards = secondList;
+         break;
+      case 3:
+         cards = lastList;
+         break;
+      }
+   }
+   getLocalCards();
+   if(id === "up") {cards = cards.value.sort((a, b) => a.rating.rate - b.rating.rate);}
+   else if(id === "doun") {cards = cards.value.sort((a, b) => b.rating.rate - a.rating.rate);}
+   else if(id === "nosort") {cards = cards;}
+   console.log(cards);
+}
+
 </script>
 
 <style lang="scss" scoped>
@@ -22,26 +86,23 @@
    column-gap: 5px;
    align-content: center;
    border-radius: 10px;
-   color: #fff;
-   // background-color: blue;
    padding: 5px;
    margin-bottom: 10px;
-}
    .filter__button {
       width: 55%;
       height: 55px;
-      // min-height: 30px;  ${borderColor}
       border-radius: 10px;
       background-color: rgb(255, 255, 255);
       padding: 3px;
       &:hover {
-         box-shadow: 0px 0px 27px 0px borderColor;
+         box-shadow: transparent;
       }
       &:active {
-         background-color: blue;
+         background-color: transparent;
       }
       &:disabled {
-         background-color: blue;
+         background-color: transparent;
+         box-shadow: none;
       }
    }
    .filter__button_up {
@@ -57,11 +118,10 @@
       background-position: center center;
    }
    .filter__button_nosort {
-      background-image: url(../assets/icon-nosort.png);
+      background-image: url(../assets/icon-clear.png);
       background-size: 50px 50px;
       background-repeat:no-repeat;
       background-position: center center;
    }
-// }
-
+}
 </style>
